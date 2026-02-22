@@ -88,7 +88,7 @@ Open **http://localhost:5173** in your browser.
 
 ## Project Structure
 ```
-spendsmart/
+SpendSmart/
 ├── backend/
 │   ├── config/          # Database connection
 │   ├── controllers/     # Route logic
