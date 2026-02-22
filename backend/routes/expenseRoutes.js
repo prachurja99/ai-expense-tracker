@@ -6,13 +6,14 @@ const {
   updateExpense,
   deleteExpense,
   getExpenseSummary,
+  getMonthlyTrend,
 } = require('../controllers/expenseController');
 const { protect } = require('../middleware/authMiddleware');
 
-// All routes are protected
 router.use(protect);
 
 router.get('/summary', getExpenseSummary);
+router.get('/trend', getMonthlyTrend);
 router.route('/').get(getExpenses).post(createExpense);
 router.route('/:id').put(updateExpense).delete(deleteExpense);
 

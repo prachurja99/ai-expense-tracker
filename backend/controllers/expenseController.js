@@ -107,10 +107,42 @@ const getExpenseSummary = async (req, res) => {
   }
 }
 
+// @route GET /api/expenses/trend
+const getMonthlyTrend = async (req, res) => {
+  try {
+    const months = []
+    const now = new Date()
+
+    for (let i = 5; i >= 0; i--) {
+      const date = new Date(now.getFullYear(), now.getMonth() - i, 1)
+      const start = new Date(date.getFullYear(), date.getMonth(), 1)
+      const end = new Date(date.getFullYear(), date.getMonth() + 1, 1)
+
+      const expenses = await Expense.find({
+        user: req.user._id,
+        date: { $gte: start, $lt: end },
+      })
+
+      const total = expenses.reduce((sum, e) => sum + e.amount, 0)
+
+      months.push({
+        month: date.toLocaleString('default', { month: 'short' }),
+        year: date.getFullYear(),
+        total: parseFloat(total.toFixed(2)),
+      })
+    }
+
+    res.json(months)
+  } catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+}
+
 module.exports = {
   getExpenses,
   createExpense,
   updateExpense,
   deleteExpense,
   getExpenseSummary,
+  getMonthlyTrend,
 }

@@ -4,6 +4,7 @@ import ExpenseForm from '../components/expenses/ExpenseForm'
 import ExpenseList from '../components/expenses/ExpenseList'
 import SummaryCards from '../components/charts/SummaryCards'
 import SpendingChart from '../components/charts/SpendingChart'
+import TrendChart from '../components/charts/TrendChart'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-react'
@@ -20,6 +21,7 @@ const Dashboard = () => {
   const [selectedYear, setSelectedYear] = useState(now.getFullYear())
   const [expenses, setExpenses] = useState([])
   const [summary, setSummary] = useState({ total: 0, byCategory: {}, count: 0 })
+  const [trend, setTrend] = useState([])
   const [loading, setLoading] = useState(true)
   const [showForm, setShowForm] = useState(false)
   const [editingExpense, setEditingExpense] = useState(null)
@@ -43,6 +45,15 @@ const Dashboard = () => {
       setSummary(data)
     } catch (error) {
       toast.error('Failed to fetch summary')
+    }
+  }
+
+  const fetchTrend = async () => {
+    try {
+      const { data } = await api.get('/expenses/trend')
+      setTrend(data)
+    } catch (error) {
+      toast.error('Failed to fetch trend')
     } finally {
       setLoading(false)
     }
@@ -52,11 +63,13 @@ const Dashboard = () => {
     setLoading(true)
     fetchExpenses()
     fetchSummary()
+    fetchTrend()
   }, [selectedMonth, selectedYear])
 
   const handleExpenseAdded = () => {
     fetchExpenses()
     fetchSummary()
+    fetchTrend()
     setShowForm(false)
     setEditingExpense(null)
   }
@@ -72,6 +85,7 @@ const Dashboard = () => {
       toast.success('Expense deleted')
       fetchExpenses()
       fetchSummary()
+      fetchTrend()
     } catch (error) {
       toast.error('Failed to delete expense')
     }
@@ -148,6 +162,8 @@ const Dashboard = () => {
                 />
               </div>
             )}
+
+            <TrendChart data={trend} />
 
             <SpendingChart summary={summary} />
 
