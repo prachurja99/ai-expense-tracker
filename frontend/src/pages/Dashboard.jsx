@@ -5,9 +5,11 @@ import ExpenseList from '../components/expenses/ExpenseList'
 import SummaryCards from '../components/charts/SummaryCards'
 import SpendingChart from '../components/charts/SpendingChart'
 import TrendChart from '../components/charts/TrendChart'
+import ExportPDF from '../components/expenses/ExportPDF'
 import api from '../utils/api'
 import toast from 'react-hot-toast'
 import { Plus, X, ChevronLeft, ChevronRight } from 'lucide-react'
+import { useAuth } from '../context/AuthContext'
 
 const MONTHS = [
   'January', 'February', 'March', 'April',
@@ -17,6 +19,7 @@ const MONTHS = [
 
 const Dashboard = () => {
   const now = new Date()
+  const { user } = useAuth()
   const [selectedMonth, setSelectedMonth] = useState(now.getMonth() + 1)
   const [selectedYear, setSelectedYear] = useState(now.getFullYear())
   const [expenses, setExpenses] = useState([])
@@ -124,13 +127,22 @@ const Dashboard = () => {
             <h1 style={styles.title}>Dashboard</h1>
             <p style={styles.subtitle}>Track and manage your expenses</p>
           </div>
-          <button
-            onClick={() => setShowForm(!showForm)}
-            style={styles.addBtn}
-          >
-            {showForm ? <X size={18} /> : <Plus size={18} />}
-            {showForm ? 'Cancel' : 'Add Expense'}
-          </button>
+          <div style={styles.headerButtons}>
+            <ExportPDF
+              expenses={expenses}
+              summary={summary}
+              selectedMonth={selectedMonth}
+              selectedYear={selectedYear}
+              userName={user?.name}
+            />
+            <button
+              onClick={() => setShowForm(!showForm)}
+              style={styles.addBtn}
+            >
+              {showForm ? <X size={18} /> : <Plus size={18} />}
+              {showForm ? 'Cancel' : 'Add Expense'}
+            </button>
+          </div>
         </div>
 
         <div style={styles.monthFilter}>
@@ -164,9 +176,7 @@ const Dashboard = () => {
             )}
 
             <TrendChart data={trend} />
-
             <SpendingChart summary={summary} />
-
             <ExpenseList
               expenses={expenses}
               onEdit={handleEdit}
@@ -204,6 +214,11 @@ const styles = {
   subtitle: {
     color: '#94a3b8',
     fontSize: '14px',
+  },
+  headerButtons: {
+    display: 'flex',
+    gap: '12px',
+    alignItems: 'center',
   },
   addBtn: {
     display: 'flex',
