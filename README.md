@@ -10,7 +10,7 @@ A full-stack expense tracking web application with AI-powered categorization, in
 
 
 ### Dashboard
-![Dashboard](screenshots/dashboard1.png)
+![Dashboard](screenshots/dashboard.png)
 
 
 ## Features
